@@ -6,6 +6,7 @@ public class IdTool {
 
     /**
      * Generating 32 bit UUid
+     *
      * @return UUid
      */
     public static String getUUID() {

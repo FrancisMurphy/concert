@@ -1,8 +1,6 @@
 package com.frank.concert.foundation.connect;
 
-import com.frank.concert.common.assistant.Logging;
-
-public abstract class BaseLinker extends Logging{
+public abstract class BaseLinker {
 
     protected String linkerId;
     protected String linkerVersion;
