@@ -30,7 +30,9 @@ public class RollCallThread implements Runnable {
                 String followerHostName = followerInetAddress.getHostName();
                 String followerHostIp = followerInetAddress.getHostAddress();
                 int followerHostPort = socket.getPort();
-                LeaderSocket leaderSocket = new LeaderSocket(socket,
+                LeaderSocketThread leaderSocketThread = new LeaderSocketThread(socket);
+                leaderSocketThread.init();
+                LeaderSocket leaderSocket = new LeaderSocket(socket,leaderSocketThread,
                         followerHostName, followerHostIp, followerHostPort);
                 rollCallListener.followerReply(leaderSocket);
             } catch (IOException e) {
