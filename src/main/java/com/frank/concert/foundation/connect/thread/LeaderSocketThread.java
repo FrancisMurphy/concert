@@ -19,8 +19,6 @@ public class LeaderSocketThread extends BaseSocketThread {
                 socket.getLocalAddress().getHostName(),socket.getInetAddress().getHostName());
 
         super.init();
-
-
     }
 
     @Override

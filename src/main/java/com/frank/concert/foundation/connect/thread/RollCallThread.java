@@ -22,7 +22,7 @@ public class RollCallThread implements Runnable {
 
     @Override
     public void run() {
-        //TODO 点名线程暂时写死，停止及重新拉起机制等待后续完善
+        //TODO 点名线程暂时循环写死，停止及重新拉起机制等待后续完善
         while (true) {
             try {
                 Socket socket = leaderServiceSocket.accept();

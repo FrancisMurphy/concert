@@ -14,8 +14,6 @@ public abstract class BaseSocketThread implements Runnable {
 
     /**
      * Initialization the socket of this Thread
-     *
-     * @param socket
      */
     public void init(){
 

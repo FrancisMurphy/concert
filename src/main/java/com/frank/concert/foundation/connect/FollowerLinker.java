@@ -12,7 +12,10 @@ import java.net.Socket;
 @Slf4j
 public class FollowerLinker extends BaseLinker{
 
-    private FollowerSocket followerSocket;
+    //The relationship between leader and follower that has been registed by follower...
+    private static FollowerSocket followerSocket;
+
+    private static Thread registerFollowerThread;
 
     private static String followerIp;
     private static int followerPort;
@@ -27,23 +30,30 @@ public class FollowerLinker extends BaseLinker{
         this.followerPort = followerPort;
 
         try{
-            //init the important member
-            Socket socket = new Socket(followerIp, followerPort);
-
-            FollowerSocketThread followerSocketThread = new FollowerSocketThread(socket);
-            followerSocketThread.init();
-            followerSocket = new FollowerSocket(socket,followerSocketThread,
-                    socket.getInetAddress().getHostName(),followerIp,followerPort);
-
-            //TODO:未完成
-
+            registerNewLeader(followerIp,followerPort);
         }catch (IOException e){
             log.error("###The serviceSocket of leader init fail, IOException: {}", e.getMessage());
         }
         log.debug("###Init leaderLinker socket service success!");
     }
 
-    private static class SinglerHolder {
+    private static synchronized void registerNewLeader(String followerIp, int followerPort) throws IOException {
+        //init the important member
+        Socket socket = new Socket(followerIp, followerPort);
+
+        FollowerSocketThread followerSocketThread = new FollowerSocketThread(socket);
+        followerSocketThread.init();
+        //registerNewLeader
+        followerSocket = new FollowerSocket(socket,followerSocketThread,
+                socket.getInetAddress().getHostName(),followerIp,followerPort);
+
+        registerFollowerThread = new Thread(followerSocket.getFollowerSocketThread(),linkerId);
+        registerFollowerThread.start();
+    }
+
+
+    private static class SinglerHolder
+    {
         private static final FollowerLinker INSTANCE = new FollowerLinker();
     }
 

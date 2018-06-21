@@ -7,8 +7,6 @@ import com.frank.concert.foundation.connect.model.LeaderSocket;
  */
 public interface RollCallListener {
 
-    /**
-     */
     void followerReply(LeaderSocket leaderSocket);
 
 }

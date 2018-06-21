@@ -22,8 +22,13 @@ import java.util.concurrent.Executors;
 public class LeaderLinker extends BaseLinker implements RollCallListener {
 
     private static ServerSocket leaderServceSocket;
-    private static List<LeaderSocket> leaderSocketList = new ArrayList<>();
 
+    //The relationship between leader and follower that has been registed by leader...
+    private static List<LeaderSocket> leaderRegisterList = new ArrayList<>();
+
+    private static Thread rollCallRegisterThread;
+
+    //管理与follower之间交互线程的线程池
     private static ExecutorService leaderSocketThreadPool;
 
     private static String leaderIp;
@@ -34,7 +39,7 @@ public class LeaderLinker extends BaseLinker implements RollCallListener {
         linkerId = SocketConstants.LeaderPrefix + IdTool.getUUID();
     }
 
-    //第二步：初始化建立leader所用的ip与端口号
+    //第二步：初始化建立leader所用的ip与端口号并拉起点名线程
     public synchronized void init(String leaderIp, int leaderPort) {
 
         this.leaderIp = leaderIp;
@@ -44,16 +49,21 @@ public class LeaderLinker extends BaseLinker implements RollCallListener {
         log.debug("###Initing leaderLinker socket service [ip:{},port:{}]...", leaderIp, leaderPort);
 
         try {
-            leaderServceSocket = new ServerSocket(leaderPort);
             //start the thread of roll call
-            new Thread(new RollCallThread(leaderServceSocket, this), linkerId).start();
-
+            initRollCall(leaderPort);
         } catch (IOException e) {
             log.error("###The serviceSocket of leader init fail, IOException: {}", e.getMessage());
         }
 
         log.debug("###Init leaderLinker socket service success!");
     }
+
+    private void initRollCall(int leaderPort) throws IOException {
+        leaderServceSocket = new ServerSocket(leaderPort);
+        rollCallRegisterThread = new Thread(new RollCallThread(leaderServceSocket, this), linkerId);
+        rollCallRegisterThread.start();
+    }
+
 
     @Override
     public void followerReply(LeaderSocket leaderSocket) {
@@ -66,7 +76,7 @@ public class LeaderLinker extends BaseLinker implements RollCallListener {
                 leaderSocket.getFollowerHostName(), leaderSocket.getFollowerHostIp(),
                 leaderSocket.getFollowerHostPort());
 
-        leaderSocketList.add(leaderSocket);
+        leaderRegisterList.add(leaderSocket);
 
         leaderSocketThreadPool.execute(leaderSocket.getLeaderSocketThread());
     }
