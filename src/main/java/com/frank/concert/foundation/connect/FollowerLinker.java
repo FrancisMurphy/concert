@@ -40,6 +40,8 @@ public class FollowerLinker extends BaseLinker{
     private static synchronized void registerNewLeader(String followerIp, int followerPort) throws IOException {
         //init the important member
         Socket socket = new Socket(followerIp, followerPort);
+        socket.setKeepAlive(true);
+        socket.setSoTimeout(30);
 
         FollowerSocketThread followerSocketThread = new FollowerSocketThread(socket);
         followerSocketThread.init();

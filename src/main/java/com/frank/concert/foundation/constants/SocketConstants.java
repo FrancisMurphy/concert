@@ -4,7 +4,7 @@ public class SocketConstants {
 
     public static final String LeaderPrefix = "Leader_";
     public static final String FollerPrefix = "Foller_";
-
+    public static final String HeartBeatPrefix = "HB.";
 }
 
 

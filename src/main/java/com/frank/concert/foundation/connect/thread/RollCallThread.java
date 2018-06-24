@@ -25,7 +25,10 @@ public class RollCallThread implements Runnable {
         //TODO 点名线程暂时循环写死，停止及重新拉起机制等待后续完善
         while (true) {
             try {
+                log.info("###Roll call thread is waiting the touch from follower...");
                 Socket socket = leaderServiceSocket.accept();
+                log.info("###There is a follower[hostName:{} hostIp:{}] comming!"
+                        ,socket.getInetAddress().getHostName(),socket.getInetAddress().getHostAddress());
                 InetAddress followerInetAddress = socket.getInetAddress();
                 String followerHostName = followerInetAddress.getHostName();
                 String followerHostIp = followerInetAddress.getHostAddress();

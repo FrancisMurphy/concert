@@ -19,9 +19,5 @@ public class FollowerSocketThread extends BaseSocketThread {
         super.init();
     }
 
-    @Override
-    public void run() {
-
-    }
 
 }

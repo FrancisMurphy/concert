@@ -21,8 +21,4 @@ public class LeaderSocketThread extends BaseSocketThread {
         super.init();
     }
 
-    @Override
-    public void run() {
-
-    }
 }
