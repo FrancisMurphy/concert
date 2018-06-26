@@ -1,5 +1,6 @@
 package com.frank.concert.foundation.connect.thread;
 
+import com.frank.concert.foundation.constants.LogConstants;
 import com.frank.concert.foundation.constants.SocketConstants;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,25 +12,30 @@ import java.net.SocketException;
  * 封装了心跳处理的线程，断连重连机制后续完善
  */
 @Slf4j
-public class HeartBeatThread implements Runnable{
+public class HeartBeatThread implements Runnable
+{
 
     private Socket localSocket;
     private Thread localThread;
     private String localId;
 
-    public HeartBeatThread(){
+    public HeartBeatThread()
+    {
     }
 
-    public void init(Socket socket, String linkId){
+    public void init(Socket socket, String linkId)
+    {
         this.localSocket = socket;
         this.localId = SocketConstants.HeartBeatPrefix + linkId;
     }
 
 
     //开始心跳线程
-    public void startHeartBeat() throws SocketException {
 
-        if(validSocket())
+    public void startHeartBeat() throws SocketException
+    {
+
+        if(!validSocket())
             return;
         log.info("###Starting the heart beat thread[id:{}] for socket[Localhost:{} TargetHost:{}]",
                 localId,localSocket.getLocalAddress().getHostAddress(),localSocket.getInetAddress().getHostAddress());
@@ -40,31 +46,41 @@ public class HeartBeatThread implements Runnable{
     }
 
     @Override
-    public void run() {
-        try {
+    public void run()
+    {
+        try
+        {
             sendHeartBeat();
-        } catch (IOException e) {
-            log.debug("###ERROR### There occur an IOException when send heart beat, Exception:{}", e.getMessage());
-        } catch (InterruptedException e) {
-            log.debug("###ERROR### There occur an InterruptedException when send heart beat, Exception:{}", e.getMessage());
+        }
+        catch (IOException e)
+        {
+            log.error(LogConstants.EX_ERROR + "There occur an IOException when send heart beat, Exception:{}", e.getMessage());
+        }
+        catch (InterruptedException e)
+        {
+            log.error(LogConstants.EX_ERROR + "There occur an InterruptedException when send heart beat, Exception:{}", e.getMessage());
         }
 
     }
 
     //判断用于发送心跳的socket是否为有效socket
-    private boolean validSocket() throws SocketException{
+    private boolean validSocket() throws SocketException
+    {
 
-        if(localSocket==null){
-            log.error("###ERROR### The socket is null, can not start heart beat thread...");
+        if(localSocket==null)
+        {
+            log.error(LogConstants.EX_ERROR + "The socket is null, can not start heart beat thread...");
             return false;
         }
 
-        if(!localSocket.isConnected()) {
-            log.error("###ERROR### The socket is not connected, can not start heart beat thread...");
+        if(!localSocket.isConnected())
+        {
+            log.error(LogConstants.EX_ERROR + "The socket is not connected, can not start heart beat thread...");
             return false;
         }
 
-        if(!localSocket.getKeepAlive()){
+        if(!localSocket.getKeepAlive())
+        {
             localSocket.setKeepAlive(true);
         }
 
@@ -72,16 +88,18 @@ public class HeartBeatThread implements Runnable{
     }
 
     /**
-     * 通过间隔15秒的方式向socket中发送空包来保持长连接检测的机制
+     * 通过间隔10秒的方式向socket中发送空包来保持长连接检测的机制
      * @throws IOException
      * @throws InterruptedException
      */
-    private void sendHeartBeat() throws IOException, InterruptedException {
+    private void sendHeartBeat() throws IOException, InterruptedException
+    {
 
-        while (true) {
-            localSocket.sendUrgentData(0xFF); // 发送心跳包
-            log.debug("### The connection of socket[{}] is regular...");
-            Thread.sleep(15 * 1000);//线程睡眠3秒
+        while (true)
+        {
+            localSocket.sendUrgentData(0xFF);
+            log.debug("### The connection of socket[{}] is regular...",localSocket.getInetAddress().getHostAddress());
+            Thread.sleep(10 * 1000);
         }
 
     }
@@ -91,7 +109,8 @@ public class HeartBeatThread implements Runnable{
         private static final HeartBeatThread INSTANCE = new HeartBeatThread();
     }
 
-    public static final HeartBeatThread getInstance() {
+    public static final HeartBeatThread getInstance()
+    {
         return HeartBeatHolder.INSTANCE;
     }
 }

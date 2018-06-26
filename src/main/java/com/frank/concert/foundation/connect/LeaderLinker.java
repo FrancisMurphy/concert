@@ -2,7 +2,6 @@ package com.frank.concert.foundation.connect;
 
 import com.frank.concert.foundation.connect.listener.RollCallListener;
 import com.frank.concert.foundation.connect.model.LeaderSocket;
-import com.frank.concert.foundation.connect.thread.BaseSocketThread;
 import com.frank.concert.foundation.connect.thread.RollCallThread;
 import com.frank.concert.foundation.constants.SocketConstants;
 import com.frank.concert.foundation.tools.IdTool;
@@ -35,12 +34,14 @@ public class LeaderLinker extends BaseLinker implements RollCallListener {
     private static int leaderPort;
 
     //第一步：获得leader socket service实例的 uuid
-    public LeaderLinker() {
+    public LeaderLinker()
+    {
         linkerId = SocketConstants.LeaderPrefix + IdTool.getUUID();
     }
 
     //第二步：初始化建立leader所用的ip与端口号并拉起点名线程
-    public synchronized void init(String leaderIp, int leaderPort) {
+    public synchronized void init(String leaderIp, int leaderPort)
+    {
 
         this.leaderIp = leaderIp;
         this.leaderPort = leaderPort;
@@ -58,7 +59,8 @@ public class LeaderLinker extends BaseLinker implements RollCallListener {
         log.debug("###Init leaderLinker socket service success!");
     }
 
-    private void initRollCall(int leaderPort) throws IOException {
+    private void initRollCall(int leaderPort) throws IOException
+    {
         leaderServceSocket = new ServerSocket(leaderPort);
         rollCallRegisterThread = new Thread(new RollCallThread(leaderServceSocket, this), linkerId);
         rollCallRegisterThread.start();
@@ -66,27 +68,39 @@ public class LeaderLinker extends BaseLinker implements RollCallListener {
 
 
     @Override
-    public void followerReply(LeaderSocket leaderSocket) {
+    public void followerReply(LeaderSocket leaderSocket)
+    {
         registerNewFollower(leaderSocket);
     }
 
     //将建立与leader建立连接follower的socket信息进行注册，并且在线程池中启动一个专用于与follower交互的线程用于处理
-    private synchronized void registerNewFollower(LeaderSocket leaderSocket) {
-        log.debug("###Registering new follower[HostName:{} HostIp:{} HostPort:{}]",
-                leaderSocket.getFollowerHostName(), leaderSocket.getFollowerHostIp(),
-                leaderSocket.getFollowerHostPort());
+    private synchronized void registerNewFollower(LeaderSocket leaderSocket)
+    {
+        log.debug("###Registering new follower[HostName:{} HostIp:{}]",
+                leaderSocket.getFollowerHostName(),leaderSocket.getFollowerHostPort());
 
         leaderRegisterList.add(leaderSocket);
 
         leaderSocketThreadPool.execute(leaderSocket.getLeaderSocketThread());
+
+        leaderSocket.getLeaderSocketThread().sendMsg("My man!");
+        log.debug("###Registering success!");
     }
 
-    private static class SinglerHolder {
+    private static class LeaderHolder
+    {
         private static final LeaderLinker INSTANCE = new LeaderLinker();
     }
 
-    public static final LeaderLinker getInstance() {
-        return SinglerHolder.INSTANCE;
+    public static final LeaderLinker getInstance()
+    {
+        return LeaderHolder.INSTANCE;
+    }
+
+    public static void main(String[] args)
+    {
+        LeaderLinker leaderLinker = LeaderLinker.getInstance();
+        leaderLinker.init("127.0.0.1",10000);
     }
 
 }

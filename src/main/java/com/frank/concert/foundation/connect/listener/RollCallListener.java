@@ -5,7 +5,8 @@ import com.frank.concert.foundation.connect.model.LeaderSocket;
 /**
  * The linstener of roll call
  */
-public interface RollCallListener {
+public interface RollCallListener
+{
 
     void followerReply(LeaderSocket leaderSocket);
 

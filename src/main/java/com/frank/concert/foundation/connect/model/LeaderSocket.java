@@ -8,7 +8,8 @@ import java.net.Socket;
 
 @Setter
 @Getter
-public class LeaderSocket {
+public class LeaderSocket
+{
 
     private Socket leaderSocket;
 
@@ -20,7 +21,9 @@ public class LeaderSocket {
 
     private int followerHostPort;
 
-    public LeaderSocket(Socket leaderSocket,LeaderSocketThread leaderSocketThread, String followerHostName, String followerHostIp, int followerHostPort) {
+    public LeaderSocket(Socket leaderSocket,LeaderSocketThread leaderSocketThread,
+                        String followerHostName, String followerHostIp, int followerHostPort)
+    {
         this.followerHostIp = followerHostIp;
         this.followerHostPort = followerHostPort;
         this.leaderSocket = leaderSocket;
