@@ -1,4 +1,4 @@
-package com.frank.concert.foundation.connect.model;
+package com.frank.concert.foundation.connect.keeper;
 
 import com.frank.concert.foundation.connect.thread.FollowerSocketThread;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import java.net.Socket;
 
 @Setter
 @Getter
-public class FollowerSocket
+public class FollowerKeeper
 {
 
     private Socket followerSocket;
@@ -21,7 +21,7 @@ public class FollowerSocket
 
     private int leaderHostPort;
 
-    public FollowerSocket(Socket followerSocket, FollowerSocketThread followerSocketThread,
+    public FollowerKeeper(Socket followerSocket, FollowerSocketThread followerSocketThread,
                           String leaderHostName, String leaderHostIp, int leaderHostPort)
     {
         this.followerSocket = followerSocket;

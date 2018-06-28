@@ -5,27 +5,23 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.Socket;
 
 @Slf4j
-public class FollowerSocketThread extends BaseSocketThread
-{
+public class FollowerSocketThread extends BaseSocketThread {
 
-    public FollowerSocketThread(Socket socket)
-    {
+    public FollowerSocketThread(Socket socket) {
         this.socket = socket;
     }
 
-    public void init()
-    {
+    public void init() {
 
         log.debug("###Init SocketThread [FollowerName:{} LeaderName:{}]...",
-                socket.getLocalAddress().getHostName(),socket.getInetAddress().getHostName());
+                socket.getLocalAddress().getHostName(), socket.getInetAddress().getHostName());
 
-        super.init();
+        baseInit();
     }
 
     @Override
-    public String receiveMsg(String msg)
-    {
-        log.info("@@@ Receivce msg form leader , msg:{}",msg);
+    public String receiveMsg(String msg) {
+        log.info("@@@ Receivce msg form leader , msg:{}", msg);
         String testMsg = "This is test msg from Follower...";
         return testMsg;
     }

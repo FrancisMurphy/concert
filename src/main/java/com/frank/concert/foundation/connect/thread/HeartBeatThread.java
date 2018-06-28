@@ -1,9 +1,13 @@
 package com.frank.concert.foundation.connect.thread;
 
+import com.frank.concert.foundation.connect.service.HeartBeatService;
+import com.frank.concert.foundation.connect.service.Impl.HeartBeatServiceImpl;
 import com.frank.concert.foundation.constants.LogConstants;
 import com.frank.concert.foundation.constants.SocketConstants;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
@@ -16,17 +20,27 @@ public class HeartBeatThread implements Runnable
 {
 
     private Socket localSocket;
+
+    private DataOutputStream localOutputStream;
+
+    private DataInputStream localInputStream;
+
     private Thread localThread;
+
     private String localId;
+
+    private HeartBeatService heartBeatService;
 
     public HeartBeatThread()
     {
     }
 
-    public void init(Socket socket, String linkId)
-    {
+    public void init(Socket socket, String linkId) throws IOException {
         this.localSocket = socket;
         this.localId = SocketConstants.HeartBeatPrefix + linkId;
+        heartBeatService = new HeartBeatServiceImpl();
+        localOutputStream = new DataOutputStream(localSocket.getOutputStream());
+        localInputStream = new DataInputStream(localSocket.getInputStream());
     }
 
 
@@ -89,6 +103,8 @@ public class HeartBeatThread implements Runnable
 
     /**
      * 通过间隔10秒的方式向socket中发送空包来保持长连接检测的机制
+     * 由于在windows上发送Urgent Data一定次数之后连接会被强行停止，故心跳机制调整至一个自定义数据包用于自行判断对方是否还处于连接中...
+     *
      * @throws IOException
      * @throws InterruptedException
      */
@@ -97,13 +113,21 @@ public class HeartBeatThread implements Runnable
 
         while (true)
         {
-            localSocket.sendUrgentData(0xFF);
+            //由于在windows上发送Urgent Data一定次数之后连接会被强行停止，故心跳机制调整至一个自定义数据包用于自行判断
+            //localSocket.sendUrgentData(0xFF);
+            //TODO:心跳包机制待完成，需要设计字节流的交互约定
+            byte[] hBPkg = heartBeatService.getHeartBeatPkg(localSocket);
+            localOutputStream.write(hBPkg);
+
             log.debug("### The connection of socket[{}] is regular...",localSocket.getInetAddress().getHostAddress());
             Thread.sleep(10 * 1000);
         }
 
     }
 
+    /**
+     * 单例模式
+     */
     private static class HeartBeatHolder
     {
         private static final HeartBeatThread INSTANCE = new HeartBeatThread();

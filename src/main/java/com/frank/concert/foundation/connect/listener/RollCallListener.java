@@ -1,6 +1,6 @@
 package com.frank.concert.foundation.connect.listener;
 
-import com.frank.concert.foundation.connect.model.LeaderSocket;
+import com.frank.concert.foundation.connect.keeper.LeaderKeeper;
 
 /**
  * The linstener of roll call
@@ -8,6 +8,6 @@ import com.frank.concert.foundation.connect.model.LeaderSocket;
 public interface RollCallListener
 {
 
-    void followerReply(LeaderSocket leaderSocket);
+    void followerReply(LeaderKeeper leaderKeeper);
 
 }

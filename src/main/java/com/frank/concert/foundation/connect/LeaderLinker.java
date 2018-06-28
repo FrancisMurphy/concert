@@ -1,7 +1,7 @@
 package com.frank.concert.foundation.connect;
 
 import com.frank.concert.foundation.connect.listener.RollCallListener;
-import com.frank.concert.foundation.connect.model.LeaderSocket;
+import com.frank.concert.foundation.connect.keeper.LeaderKeeper;
 import com.frank.concert.foundation.connect.thread.RollCallThread;
 import com.frank.concert.foundation.constants.SocketConstants;
 import com.frank.concert.foundation.tools.IdTool;
@@ -23,7 +23,7 @@ public class LeaderLinker extends BaseLinker implements RollCallListener {
     private static ServerSocket leaderServceSocket;
 
     //The relationship between leader and follower that has been registed by leader...
-    private static List<LeaderSocket> leaderRegisterList = new ArrayList<>();
+    private static List<LeaderKeeper> leaderRegisterList = new ArrayList<>();
 
     private static Thread rollCallRegisterThread;
 
@@ -68,22 +68,22 @@ public class LeaderLinker extends BaseLinker implements RollCallListener {
 
 
     @Override
-    public void followerReply(LeaderSocket leaderSocket)
+    public void followerReply(LeaderKeeper leaderKeeper)
     {
-        registerNewFollower(leaderSocket);
+        registerNewFollower(leaderKeeper);
     }
 
     //将建立与leader建立连接follower的socket信息进行注册，并且在线程池中启动一个专用于与follower交互的线程用于处理
-    private synchronized void registerNewFollower(LeaderSocket leaderSocket)
+    private synchronized void registerNewFollower(LeaderKeeper leaderKeeper)
     {
         log.debug("###Registering new follower[HostName:{} HostIp:{}]",
-                leaderSocket.getFollowerHostName(),leaderSocket.getFollowerHostPort());
+                leaderKeeper.getFollowerHostName(), leaderKeeper.getFollowerHostPort());
 
-        leaderRegisterList.add(leaderSocket);
+        leaderRegisterList.add(leaderKeeper);
 
-        leaderSocketThreadPool.execute(leaderSocket.getLeaderSocketThread());
+        leaderSocketThreadPool.execute(leaderKeeper.getLeaderSocketThread());
 
-        leaderSocket.getLeaderSocketThread().sendMsg("My man!");
+        leaderKeeper.getLeaderSocketThread().sendMsg("My man!");
         log.debug("###Registering success!");
     }
 

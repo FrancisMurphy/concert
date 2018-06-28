@@ -1,7 +1,7 @@
 package com.frank.concert.foundation.connect.thread;
 
 import com.frank.concert.foundation.connect.listener.RollCallListener;
-import com.frank.concert.foundation.connect.model.LeaderSocket;
+import com.frank.concert.foundation.connect.keeper.LeaderKeeper;
 import com.frank.concert.foundation.constants.LogConstants;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,9 +41,9 @@ public class RollCallThread implements Runnable
                 int followerHostPort = socket.getPort();
                 LeaderSocketThread leaderSocketThread = new LeaderSocketThread(socket);
                 leaderSocketThread.init();
-                LeaderSocket leaderSocket = new LeaderSocket(socket,leaderSocketThread,
+                LeaderKeeper leaderKeeper = new LeaderKeeper(socket,leaderSocketThread,
                         followerHostName, followerHostIp, followerHostPort);
-                rollCallListener.followerReply(leaderSocket);
+                rollCallListener.followerReply(leaderKeeper);
             }
             catch (IOException e)
             {

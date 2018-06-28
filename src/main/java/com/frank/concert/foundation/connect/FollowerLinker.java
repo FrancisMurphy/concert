@@ -1,6 +1,6 @@
 package com.frank.concert.foundation.connect;
 
-import com.frank.concert.foundation.connect.model.FollowerSocket;
+import com.frank.concert.foundation.connect.keeper.FollowerKeeper;
 import com.frank.concert.foundation.connect.thread.FollowerSocketThread;
 import com.frank.concert.foundation.constants.SocketConstants;
 import com.frank.concert.foundation.tools.IdTool;
@@ -14,7 +14,7 @@ public class FollowerLinker extends BaseLinker
 {
 
     //The relationship between leader and follower that has been registed by follower...
-    private static FollowerSocket followerSocket;
+    private static FollowerKeeper followerKeeper;
 
     private static Thread registerFollowerThread;
 
@@ -50,10 +50,10 @@ public class FollowerLinker extends BaseLinker
         FollowerSocketThread followerSocketThread = new FollowerSocketThread(socket);
         followerSocketThread.init();
         //registerNewLeader
-        followerSocket = new FollowerSocket(socket,followerSocketThread,
+        followerKeeper = new FollowerKeeper(socket,followerSocketThread,
                 socket.getInetAddress().getHostName(),leaderIp,leaderPort);
 
-        registerFollowerThread = new Thread(followerSocket.getFollowerSocketThread(),linkerId);
+        registerFollowerThread = new Thread(followerKeeper.getFollowerSocketThread(),linkerId);
         registerFollowerThread.start();
     }
 
