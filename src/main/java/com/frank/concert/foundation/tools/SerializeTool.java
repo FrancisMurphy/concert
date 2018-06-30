@@ -1,4 +1,4 @@
-package com.frank.concert.foundation.connect.utils;
+package com.frank.concert.foundation.tools;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -8,7 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 @Slf4j
-public class SerializeUtil {
+public class SerializeTool {
 
     public static byte[] serialize(Object object) {
         ObjectOutputStream oos = null;

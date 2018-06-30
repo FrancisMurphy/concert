@@ -1,10 +1,10 @@
-package com.frank.concert.foundation.connect.utils;
+package com.frank.concert.foundation.tools;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class TimeUtil
+public class TimeTool
 {
 
     private static final SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmssSSS");

@@ -115,11 +115,13 @@ public class HeartBeatThread implements Runnable
         {
             //由于在windows上发送Urgent Data一定次数之后连接会被强行停止，故心跳机制调整至一个自定义数据包用于自行判断
             //localSocket.sendUrgentData(0xFF);
-            //TODO:心跳包机制待完成，需要设计字节流的交互约定
+
+            //发送通用标准心跳包
             byte[] hBPkg = heartBeatService.getHeartBeatPkg(localSocket);
             localOutputStream.write(hBPkg);
+            localOutputStream.flush();
 
-            log.debug("### The connection of socket[{}] is regular...",localSocket.getInetAddress().getHostAddress());
+            //log.debug("### The connection of socket[{}] is regular...",localSocket.getInetAddress().getHostAddress());
             Thread.sleep(10 * 1000);
         }
 

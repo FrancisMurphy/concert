@@ -14,7 +14,7 @@ import java.net.Socket;
 public abstract class BaseSocketThread implements Runnable {
 
     protected Socket socket;
-    protected BufferedReader bufferedReader;
+    protected DataInputStream dataInputStream;
     protected PrintWriter printWriter;
     protected HeartBeatThread heartBeatThread;
 
@@ -23,15 +23,10 @@ public abstract class BaseSocketThread implements Runnable {
      */
     public void baseInit() {
 
-        //初始化输入输出流
-        InputStreamReader reader;
-        OutputStreamWriter writer;
-
         try {
-            reader = new InputStreamReader(socket.getInputStream());
+            dataInputStream = new DataInputStream(socket.getInputStream());
+            //TODO: 中断点，明天继续
             writer = new OutputStreamWriter(socket.getOutputStream());
-            this.bufferedReader = new BufferedReader(reader);
-            this.printWriter = new PrintWriter(writer);
 
             //开始心跳
             //TODO:需要实现Thread中对对应Lind的信息注册，此处吧LinkId先行写死

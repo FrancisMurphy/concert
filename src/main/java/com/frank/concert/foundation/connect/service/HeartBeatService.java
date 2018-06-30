@@ -1,6 +1,6 @@
 package com.frank.concert.foundation.connect.service;
 
-import com.frank.concert.foundation.connect.model.HeartBeatPkg;
+import com.frank.concert.foundation.connect.pkg.HeartBeatPkg;
 
 import java.net.Socket;
 
