@@ -15,7 +15,7 @@ public abstract class BaseSocketThread implements Runnable {
 
     protected Socket socket;
     protected DataInputStream dataInputStream;
-    protected PrintWriter printWriter;
+    protected DataOutputStream dataOutputStream;
     protected HeartBeatThread heartBeatThread;
 
     /**
@@ -26,7 +26,7 @@ public abstract class BaseSocketThread implements Runnable {
         try {
             dataInputStream = new DataInputStream(socket.getInputStream());
             //TODO: 中断点，明天继续
-            writer = new OutputStreamWriter(socket.getOutputStream());
+            dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
             //开始心跳
             //TODO:需要实现Thread中对对应Lind的信息注册，此处吧LinkId先行写死
@@ -43,7 +43,7 @@ public abstract class BaseSocketThread implements Runnable {
 
     @Override
     public void run() {
-        String msg = null;
+        byte[] msg = null;
         String resp = null;
         try {
             while ((msg = bufferedReader.readLine()) != null) {
@@ -52,6 +52,7 @@ public abstract class BaseSocketThread implements Runnable {
                 Thread.sleep(1000);
                 sendRespMsg(resp);
             }
+
         } catch (IOException e) {
             log.error(LogConstants.EX_ERROR + "There is an IOException occur, exception info: {}", e.getMessage());
         } catch (InterruptedException e) {
@@ -84,5 +85,36 @@ public abstract class BaseSocketThread implements Runnable {
     public void sendMsg(String msg) {
         printWriter.println(msg);
         printWriter.flush();
+    }
+
+    /**
+     * 解析Socket交互通用包
+     * 解析思路：由于网络通信时可能采用的分包策略，dataInputStream.available返回的可用字节长度不能作为pkg包的整体长度，
+     * 为保证原子性，对eventTypeBa、contentByteArrayLengthBa 和 contentObjectBa 分包进行独立的堵塞策略；
+     * 转换约定：
+     * 事件类型(eventType int->byte[4]) + 内容字节数组长度(contentByteArrayLength int->byte[4])
+     * + 序列化为字节数组的VO(contentObject Object->byte[n])
+     * @param dataInputStream 数据输入流
+     * @return 解析完成的内容pkg字节数组
+     */
+    private byte[] readCriteriaPkg(DataInputStream dataInputStream) throws IOException {
+
+        while(true){
+            byte[] eventTypeBa = new byte[4];
+            byte[] contentLengthBa = new byte[4];
+
+            //pkgBaLength在此只起到一个参考作用，dataInputStream.available由于网络通信时可能采用的分包策略，为保证原子性，使用
+            int pkgBaLength = 0;
+
+            while (pkgBaLength == 0) {
+                pkgBaLength = dataInputStream.available();
+            }
+
+
+            dataInputStream.readFully(b);
+
+
+        }
+
     }
 }
