@@ -1,6 +1,10 @@
 package com.frank.concert.foundation.connect.thread;
 
+import com.frank.concert.foundation.connect.letter.HeartBeatLetter;
+import com.frank.concert.foundation.connect.pojo.Envelope;
 import com.frank.concert.foundation.constants.LogConstants;
+import com.frank.concert.foundation.tools.ByteArrayTool;
+import com.frank.concert.foundation.tools.SerializeTool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -45,19 +49,23 @@ public abstract class BaseSocketThread implements Runnable {
     public void run() {
         byte[] msg = null;
         String resp = null;
-        try {
-            while ((msg = bufferedReader.readLine()) != null) {
-                resp = receiveMsg(msg);
-                //TODO:为方便测试进行间隔延迟
-                Thread.sleep(1000);
-                sendRespMsg(resp);
-            }
+        while(true){
+            try {
+                Envelope envelope = readCriteriaPkg(dataInputStream);
 
-        } catch (IOException e) {
-            log.error(LogConstants.EX_ERROR + "There is an IOException occur, exception info: {}", e.getMessage());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+                //获取pkg临时固定为com.frank.concert.foundation.connect.letter.HeartBeatLetter
+                HeartBeatLetter hBLetter = (HeartBeatLetter)envelope.getLetter();
+                String from = hBLetter.getFrom();
+                log.info("### Receivce heart beat from {}",from);
+                //临时延迟
+                Thread.sleep(1000);
+            } catch (IOException e) {
+                log.error(LogConstants.EX_ERROR + "There is an IOException occur, exception info: {}", e.getMessage());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
     /**
@@ -70,8 +78,6 @@ public abstract class BaseSocketThread implements Runnable {
             log.error(LogConstants.EX_ERROR + "The resp msg is null which could not send...");
             return;
         }
-        printWriter.println(msg);
-        printWriter.flush();
     }
 
     /**
@@ -83,8 +89,6 @@ public abstract class BaseSocketThread implements Runnable {
     public abstract String receiveMsg(String msg);
 
     public void sendMsg(String msg) {
-        printWriter.println(msg);
-        printWriter.flush();
     }
 
     /**
@@ -94,27 +98,45 @@ public abstract class BaseSocketThread implements Runnable {
      * 转换约定：
      * 事件类型(eventType int->byte[4]) + 内容字节数组长度(contentByteArrayLength int->byte[4])
      * + 序列化为字节数组的VO(contentObject Object->byte[n])
+     *
      * @param dataInputStream 数据输入流
      * @return 解析完成的内容pkg字节数组
      */
-    private byte[] readCriteriaPkg(DataInputStream dataInputStream) throws IOException {
+    private Envelope readCriteriaPkg(DataInputStream dataInputStream) throws IOException {
 
-        while(true){
-            byte[] eventTypeBa = new byte[4];
-            byte[] contentLengthBa = new byte[4];
+        byte[] eventTypeBa = new byte[4];
+        byte[] letterLengthBa = new byte[4];
 
-            //pkgBaLength在此只起到一个参考作用，dataInputStream.available由于网络通信时可能采用的分包策略，为保证原子性，使用
-            int pkgBaLength = 0;
+        /**
+         * pkgBaLength在此只起到一个参考作用，dataInputStream.available由于网络通信时可能采用的半包策略，为保证原子性，在获取到长度之后
+         * 对正文长度进行堵塞式获取；
+         */
+        int pkgBaLength = 0;
 
-            while (pkgBaLength == 0) {
-                pkgBaLength = dataInputStream.available();
-            }
-
-
-            dataInputStream.readFully(b);
-
-
+        while (pkgBaLength == 0) {
+            pkgBaLength = dataInputStream.available();
         }
 
+        dataInputStream.readFully(eventTypeBa);
+        int eventType = ByteArrayTool.ByteArrayToInt(eventTypeBa);
+
+        dataInputStream.readFully(letterLengthBa);
+        int contentLength = ByteArrayTool.ByteArrayToInt(letterLengthBa);
+
+        if(contentLength<=0){
+            return null;
+        }
+
+        byte[] letterBa = new byte[contentLength];
+        dataInputStream.readFully(letterBa);
+
+        Envelope envelope = new Envelope();
+        envelope.setEventType(eventType);
+        envelope.setContentLength(contentLength);
+
+        Object letter = SerializeTool.deserialize(letterBa);
+        envelope.setLetter(letter);
+
+        return envelope;
     }
 }

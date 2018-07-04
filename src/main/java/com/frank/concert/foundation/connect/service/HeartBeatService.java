@@ -1,6 +1,6 @@
 package com.frank.concert.foundation.connect.service;
 
-import com.frank.concert.foundation.connect.pkg.HeartBeatPkg;
+import com.frank.concert.foundation.connect.letter.HeartBeatLetter;
 
 import java.net.Socket;
 
@@ -16,6 +16,6 @@ public interface HeartBeatService {
     /**
      * 心跳接收方解析心跳字节获取心跳包VO
      */
-    public HeartBeatPkg getHeartBeatPkg(byte[] heartBeatPkgByteArray);
+    public HeartBeatLetter getHeartBeatPkg(byte[] heartBeatPkgByteArray);
 
 }

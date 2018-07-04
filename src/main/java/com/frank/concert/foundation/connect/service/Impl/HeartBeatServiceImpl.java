@@ -1,7 +1,7 @@
 package com.frank.concert.foundation.connect.service.Impl;
 
 import com.frank.concert.foundation.Agreement.AgreeInterpreter;
-import com.frank.concert.foundation.connect.pkg.HeartBeatPkg;
+import com.frank.concert.foundation.connect.letter.HeartBeatLetter;
 import com.frank.concert.foundation.connect.service.HeartBeatService;
 import com.frank.concert.foundation.tools.SerializeTool;
 import com.frank.concert.foundation.tools.TimeTool;
@@ -13,7 +13,7 @@ public class HeartBeatServiceImpl implements HeartBeatService {
     @Override
     public byte[] getHeartBeatPkg(Socket socket) {
 
-        HeartBeatPkg heartBeatPkg = new HeartBeatPkg();
+        HeartBeatLetter heartBeatPkg = new HeartBeatLetter();
         heartBeatPkg.setFrom(socket.getLocalAddress().getHostAddress());
         heartBeatPkg.setTo(socket.getInetAddress().getHostAddress());
         heartBeatPkg.setTimeStamp(TimeTool.getCurDate());
@@ -25,8 +25,8 @@ public class HeartBeatServiceImpl implements HeartBeatService {
     }
 
     @Override
-    public HeartBeatPkg getHeartBeatPkg(byte[] heartBeatPkgByteArray) {
-        HeartBeatPkg pkg = (HeartBeatPkg) AgreeInterpreter.unsealCriteriaPkg(heartBeatPkgByteArray);
+    public HeartBeatLetter getHeartBeatPkg(byte[] heartBeatPkgByteArray) {
+        HeartBeatLetter pkg = (HeartBeatLetter) AgreeInterpreter.unsealCriteriaPkg(heartBeatPkgByteArray);
         return pkg;
     }
 

@@ -1,9 +1,9 @@
-package com.frank.concert.foundation.connect.pkg;
+package com.frank.concert.foundation.connect.letter;
 
 import lombok.Data;
 
 @Data
-public class BasePkg {
+public class BaseLetter {
 
     //时间戳 格式统一为 yyyy-MM-dd HH:mm:ss
     private String timeStamp;
