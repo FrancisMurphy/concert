@@ -1,4 +1,4 @@
-package com.frank.concert.foundation.connect;
+package com.frank.concert.foundation.connect.bio;
 
 public abstract class BaseLinker
 {

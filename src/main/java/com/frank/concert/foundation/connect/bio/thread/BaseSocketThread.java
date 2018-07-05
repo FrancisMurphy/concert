@@ -1,7 +1,7 @@
-package com.frank.concert.foundation.connect.thread;
+package com.frank.concert.foundation.connect.bio.thread;
 
-import com.frank.concert.foundation.connect.letter.HeartBeatLetter;
-import com.frank.concert.foundation.connect.pojo.Envelope;
+import com.frank.concert.foundation.connect.bio.pojo.Envelope;
+import com.frank.concert.foundation.connect.bio.letter.HeartBeatLetter;
 import com.frank.concert.foundation.constants.LogConstants;
 import com.frank.concert.foundation.tools.ByteArrayTool;
 import com.frank.concert.foundation.tools.SerializeTool;
@@ -29,7 +29,6 @@ public abstract class BaseSocketThread implements Runnable {
 
         try {
             dataInputStream = new DataInputStream(socket.getInputStream());
-            //TODO: 中断点，明天继续
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
             //开始心跳

@@ -1,8 +1,8 @@
-package com.frank.concert.foundation.connect.service.Impl;
+package com.frank.concert.foundation.connect.bio.service.Impl;
 
 import com.frank.concert.foundation.Agreement.AgreeInterpreter;
-import com.frank.concert.foundation.connect.letter.HeartBeatLetter;
-import com.frank.concert.foundation.connect.service.HeartBeatService;
+import com.frank.concert.foundation.connect.bio.letter.HeartBeatLetter;
+import com.frank.concert.foundation.connect.bio.service.HeartBeatService;
 import com.frank.concert.foundation.tools.SerializeTool;
 import com.frank.concert.foundation.tools.TimeTool;
 

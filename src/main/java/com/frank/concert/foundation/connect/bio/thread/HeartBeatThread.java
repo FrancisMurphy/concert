@@ -1,7 +1,7 @@
-package com.frank.concert.foundation.connect.thread;
+package com.frank.concert.foundation.connect.bio.thread;
 
-import com.frank.concert.foundation.connect.service.HeartBeatService;
-import com.frank.concert.foundation.connect.service.Impl.HeartBeatServiceImpl;
+import com.frank.concert.foundation.connect.bio.service.HeartBeatService;
+import com.frank.concert.foundation.connect.bio.service.Impl.HeartBeatServiceImpl;
 import com.frank.concert.foundation.constants.LogConstants;
 import com.frank.concert.foundation.constants.SocketConstants;
 import lombok.extern.slf4j.Slf4j;

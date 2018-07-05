@@ -1,4 +1,4 @@
-package com.frank.concert.foundation.connect.pojo;
+package com.frank.concert.foundation.connect.bio.pojo;
 
 import lombok.Data;
 

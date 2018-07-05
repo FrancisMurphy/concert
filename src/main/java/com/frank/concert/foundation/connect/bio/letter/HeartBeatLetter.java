@@ -1,4 +1,4 @@
-package com.frank.concert.foundation.connect.letter;
+package com.frank.concert.foundation.connect.bio.letter;
 
 import lombok.Data;
 

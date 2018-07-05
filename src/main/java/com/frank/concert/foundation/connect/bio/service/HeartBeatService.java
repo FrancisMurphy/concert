@@ -1,6 +1,6 @@
-package com.frank.concert.foundation.connect.service;
+package com.frank.concert.foundation.connect.bio.service;
 
-import com.frank.concert.foundation.connect.letter.HeartBeatLetter;
+import com.frank.concert.foundation.connect.bio.letter.HeartBeatLetter;
 
 import java.net.Socket;
 

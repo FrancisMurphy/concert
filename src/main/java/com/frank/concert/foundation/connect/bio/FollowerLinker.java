@@ -1,7 +1,7 @@
-package com.frank.concert.foundation.connect;
+package com.frank.concert.foundation.connect.bio;
 
-import com.frank.concert.foundation.connect.keeper.FollowerKeeper;
-import com.frank.concert.foundation.connect.thread.FollowerSocketThread;
+import com.frank.concert.foundation.connect.bio.keeper.FollowerKeeper;
+import com.frank.concert.foundation.connect.bio.thread.FollowerSocketThread;
 import com.frank.concert.foundation.constants.SocketConstants;
 import com.frank.concert.foundation.tools.IdTool;
 import lombok.extern.slf4j.Slf4j;

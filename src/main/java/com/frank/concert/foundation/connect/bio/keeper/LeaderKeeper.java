@@ -1,6 +1,6 @@
-package com.frank.concert.foundation.connect.keeper;
+package com.frank.concert.foundation.connect.bio.keeper;
 
-import com.frank.concert.foundation.connect.thread.LeaderSocketThread;
+import com.frank.concert.foundation.connect.bio.thread.LeaderSocketThread;
 import lombok.Getter;
 import lombok.Setter;
 
