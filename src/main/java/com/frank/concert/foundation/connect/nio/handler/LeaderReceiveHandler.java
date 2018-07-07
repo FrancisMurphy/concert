@@ -6,7 +6,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
-public class SocketReadHandler implements Runnable{
+public class LeaderReceiveHandler implements Runnable{
 
     private SocketChannel socketChannel;
     private SelectionKey sk;
@@ -15,7 +15,7 @@ public class SocketReadHandler implements Runnable{
     private static final int READING = 0;
     private static final int SENDING  = 1;
 
-    public SocketReadHandler(Selector sel, SocketChannel socketChannel){
+    public LeaderReceiveHandler(Selector sel, SocketChannel socketChannel){
         this.socketChannel = socketChannel;
         this.sel = sel;
     }

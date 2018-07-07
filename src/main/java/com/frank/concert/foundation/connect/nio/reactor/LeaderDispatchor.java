@@ -8,16 +8,27 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
-public class LeaderReactor implements Runnable {
+public class LeaderDispatchor implements Runnable {
 
     private ServerSocketChannel serverSocket;
     private Selector selector;
 
-    public LeaderReactor(ServerSocketChannel serverSocket, Selector selector) {
+    //负责管理leander所有线程的线程池容器
+    private static ExecutorService handlerThreadPool;
+
+    public LeaderDispatchor(ServerSocketChannel serverSocket, Selector selector) {
         this.serverSocket = serverSocket;
         this.selector = selector;
+    }
+
+    public void init(){
+
+        handlerThreadPool = Executors.newCachedThreadPool();
+
     }
 
     public void run() { // normally in a new Thread
@@ -38,12 +49,14 @@ public class LeaderReactor implements Runnable {
         }
     }
 
-    //运行Acceptor或SocketReadHandler
-    private void dispatch(SelectionKey k) {
-        Runnable r = (Runnable) (k.attachment());
-        if (r != null) {
-        // r.run();
-        }
+    //运行对应的handler
+    private void dispatch(SelectionKey selectionKey) {
+        Runnable handler = (Runnable) (selectionKey.attachment());
+
+        handlerThreadPool.execute(handler);
+
+        selectionKey.cancel();
+
     }
 
 }
