@@ -8,8 +8,7 @@ import java.net.Socket;
 
 @Setter
 @Getter
-public class LeaderKeeper
-{
+public class LeaderKeeper {
 
     private Socket leaderSocket;
 
@@ -22,8 +21,7 @@ public class LeaderKeeper
     private int followerHostPort;
 
     public LeaderKeeper(Socket leaderSocket, LeaderSocketThread leaderSocketThread,
-                        String followerHostName, String followerHostIp, int followerHostPort)
-    {
+                        String followerHostName, String followerHostIp, int followerHostPort) {
         this.followerHostIp = followerHostIp;
         this.followerHostPort = followerHostPort;
         this.leaderSocket = leaderSocket;

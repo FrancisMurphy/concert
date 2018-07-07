@@ -16,8 +16,7 @@ import java.net.SocketException;
  * 封装了心跳处理的线程，断连重连机制后续完善
  */
 @Slf4j
-public class HeartBeatThread implements Runnable
-{
+public class HeartBeatThread implements Runnable {
 
     private Socket localSocket;
 
@@ -31,8 +30,7 @@ public class HeartBeatThread implements Runnable
 
     private HeartBeatService heartBeatService;
 
-    public HeartBeatThread()
-    {
+    public HeartBeatThread() {
     }
 
     public void init(Socket socket, String linkId) throws IOException {
@@ -46,13 +44,12 @@ public class HeartBeatThread implements Runnable
 
     //开始心跳线程
 
-    public void startHeartBeat() throws SocketException
-    {
+    public void startHeartBeat() throws SocketException {
 
-        if(!validSocket())
+        if (!validSocket())
             return;
         log.info("###Starting the heart beat thread[id:{}] for socket[Localhost:{} TargetHost:{}]",
-                localId,localSocket.getLocalAddress().getHostAddress(),localSocket.getInetAddress().getHostAddress());
+                localId, localSocket.getLocalAddress().getHostAddress(), localSocket.getInetAddress().getHostAddress());
 
         localThread = new Thread(this);
         localThread.start();
@@ -60,41 +57,31 @@ public class HeartBeatThread implements Runnable
     }
 
     @Override
-    public void run()
-    {
-        try
-        {
+    public void run() {
+        try {
             sendHeartBeat();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             log.error(LogConstants.EX_ERROR + "There occur an IOException when send heart beat, Exception:{}", e.getMessage());
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             log.error(LogConstants.EX_ERROR + "There occur an InterruptedException when send heart beat, Exception:{}", e.getMessage());
         }
 
     }
 
     //判断用于发送心跳的socket是否为有效socket
-    private boolean validSocket() throws SocketException
-    {
+    private boolean validSocket() throws SocketException {
 
-        if(localSocket==null)
-        {
+        if (localSocket == null) {
             log.error(LogConstants.EX_ERROR + "The socket is null, can not start heart beat thread...");
             return false;
         }
 
-        if(!localSocket.isConnected())
-        {
+        if (!localSocket.isConnected()) {
             log.error(LogConstants.EX_ERROR + "The socket is not connected, can not start heart beat thread...");
             return false;
         }
 
-        if(!localSocket.getKeepAlive())
-        {
+        if (!localSocket.getKeepAlive()) {
             localSocket.setKeepAlive(true);
         }
 
@@ -108,11 +95,9 @@ public class HeartBeatThread implements Runnable
      * @throws IOException
      * @throws InterruptedException
      */
-    private void sendHeartBeat() throws IOException, InterruptedException
-    {
+    private void sendHeartBeat() throws IOException, InterruptedException {
 
-        while (true)
-        {
+        while (true) {
             //由于在windows上发送Urgent Data一定次数之后连接会被强行停止，故心跳机制调整至一个自定义数据包用于自行判断
             //localSocket.sendUrgentData(0xFF);
 
@@ -130,13 +115,11 @@ public class HeartBeatThread implements Runnable
     /**
      * 单例模式
      */
-    private static class HeartBeatHolder
-    {
+    private static class HeartBeatHolder {
         private static final HeartBeatThread INSTANCE = new HeartBeatThread();
     }
 
-    public static final HeartBeatThread getInstance()
-    {
+    public static final HeartBeatThread getInstance() {
         return HeartBeatHolder.INSTANCE;
     }
 }

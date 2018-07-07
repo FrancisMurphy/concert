@@ -25,7 +25,7 @@ public class LeaderDispatchor implements Runnable {
         this.selector = selector;
     }
 
-    public void init(){
+    public void init() {
 
         handlerThreadPool = Executors.newCachedThreadPool();
 
@@ -33,15 +33,17 @@ public class LeaderDispatchor implements Runnable {
 
     public void run() { // normally in a new Thread
         try {
-            while (!Thread.interrupted()) {
+            while (true) {
                 selector.select();
                 Set selected = selector.selectedKeys();
-                Iterator it = selected.iterator();
+                Iterator iterator = selected.iterator();
                 //Selector如果发现channel有OP_ACCEPT或READ事件发生，下列遍历就会进行。
-                while (it.hasNext())
+                while (iterator.hasNext()){
                     //来一个事件 第一次触发一个accepter线程
                     //以后触发SocketReadHandler
-                    dispatch((SelectionKey) (it.next()));
+                    dispatch((SelectionKey) (iterator.next()));
+                    iterator.remove();
+                }
                 selected.clear();
             }
         } catch (IOException ex) {
@@ -52,9 +54,7 @@ public class LeaderDispatchor implements Runnable {
     //运行对应的handler
     private void dispatch(SelectionKey selectionKey) {
         Runnable handler = (Runnable) (selectionKey.attachment());
-
         handlerThreadPool.execute(handler);
-
         selectionKey.cancel();
 
     }

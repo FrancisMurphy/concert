@@ -8,6 +8,7 @@ public interface HeartBeatService {
 
     /**
      * 心跳发起者获取心跳VO
+     *
      * @param socket 用于发送心跳的socket
      * @return 心跳VO
      */

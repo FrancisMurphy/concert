@@ -10,8 +10,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 @Slf4j
-public class FollowerLinker extends BaseLinker
-{
+public class FollowerLinker extends BaseLinker {
 
     //The relationship between leader and follower that has been registed by follower...
     private static FollowerKeeper followerKeeper;
@@ -21,27 +20,24 @@ public class FollowerLinker extends BaseLinker
     private static String leaderIp;
     private static int leaderPort;
 
-    public FollowerLinker()
-    {
+    public FollowerLinker() {
         linkerId = SocketConstants.FollerPrefix + IdTool.getUUID();
     }
 
-    public void init(String leaderIp, int leaderPort)
-    {
+    public void init(String leaderIp, int leaderPort) {
 
         this.leaderIp = leaderIp;
         this.leaderPort = leaderPort;
 
-        try{
-            registerNewLeader(leaderIp,leaderPort);
-        }catch (IOException e){
+        try {
+            registerNewLeader(leaderIp, leaderPort);
+        } catch (IOException e) {
             log.error("###The serviceSocket of leader init fail, IOException: {}", e.getMessage());
         }
         log.debug("###Init leaderLinker socket service success!");
     }
 
-    private static synchronized void registerNewLeader(String leaderIp, int leaderPort) throws IOException
-    {
+    private static synchronized void registerNewLeader(String leaderIp, int leaderPort) throws IOException {
         //init the important member
         Socket socket = new Socket(leaderIp, leaderPort);
         socket.setKeepAlive(true);
@@ -50,28 +46,25 @@ public class FollowerLinker extends BaseLinker
         FollowerSocketThread followerSocketThread = new FollowerSocketThread(socket);
         followerSocketThread.init();
         //registerNewLeader
-        followerKeeper = new FollowerKeeper(socket,followerSocketThread,
-                socket.getInetAddress().getHostName(),leaderIp,leaderPort);
+        followerKeeper = new FollowerKeeper(socket, followerSocketThread,
+                socket.getInetAddress().getHostName(), leaderIp, leaderPort);
 
-        registerFollowerThread = new Thread(followerKeeper.getFollowerSocketThread(),linkerId);
+        registerFollowerThread = new Thread(followerKeeper.getFollowerSocketThread(), linkerId);
         registerFollowerThread.start();
     }
 
 
-    private static class FollowerHolder
-    {
+    private static class FollowerHolder {
         private static final FollowerLinker INSTANCE = new FollowerLinker();
     }
 
-    public static final FollowerLinker getInstance()
-    {
+    public static final FollowerLinker getInstance() {
         return FollowerHolder.INSTANCE;
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         FollowerLinker followerLinker = FollowerLinker.getInstance();
-        followerLinker.init("127.0.0.1",10000);
+        followerLinker.init("127.0.0.1", 10000);
     }
 
 }

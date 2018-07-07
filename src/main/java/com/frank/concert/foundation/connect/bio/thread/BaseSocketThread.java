@@ -48,14 +48,14 @@ public abstract class BaseSocketThread implements Runnable {
     public void run() {
         byte[] msg = null;
         String resp = null;
-        while(true){
+        while (true) {
             try {
                 Envelope envelope = readCriteriaPkg(dataInputStream);
 
                 //获取pkg临时固定为com.frank.concert.foundation.connect.letter.HeartBeatLetter
-                HeartBeatLetter hBLetter = (HeartBeatLetter)envelope.getLetter();
+                HeartBeatLetter hBLetter = (HeartBeatLetter) envelope.getLetter();
                 String from = hBLetter.getFrom();
-                log.info("### Receivce heart beat from {}",from);
+                log.info("### Receivce heart beat from {}", from);
                 //临时延迟
                 Thread.sleep(1000);
             } catch (IOException e) {
@@ -122,7 +122,7 @@ public abstract class BaseSocketThread implements Runnable {
         dataInputStream.readFully(letterLengthBa);
         int contentLength = ByteArrayTool.ByteArrayToInt(letterLengthBa);
 
-        if(contentLength<=0){
+        if (contentLength <= 0) {
             return null;
         }
 
