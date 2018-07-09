@@ -41,6 +41,8 @@ public class LeaderManager {
         serverSocketChannel.socket().bind(new InetSocketAddress(7777), 1024);
         // 设置为非阻塞模式, 这个非常重要
         serverSocketChannel.configureBlocking(false);
+
+        selector = Selector.open();
     }
 
     /**
@@ -49,7 +51,6 @@ public class LeaderManager {
      * @throws IOException
      */
     private void initReactor() throws IOException {
-        selector = Selector.open();
         //向selector注册该channel
         SelectionKey sk = serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 

@@ -9,7 +9,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
 @Slf4j
-public class LeaderReceiveHandler implements Runnable {
+public class FollowerReceiveHandler implements Runnable{
 
     private SocketChannel socketChannel;
     private SelectionKey sk;
@@ -27,7 +27,7 @@ public class LeaderReceiveHandler implements Runnable {
     private static final int READING = 0;
     private static final int SENDING = 1;
 
-    public LeaderReceiveHandler(Selector selector, SocketChannel socketChannel) {
+    public FollowerReceiveHandler(Selector selector, SocketChannel socketChannel) {
         this.socketChannel = socketChannel;
         this.selector = selector;
     }
@@ -37,8 +37,6 @@ public class LeaderReceiveHandler implements Runnable {
         socketChannel.configureBlocking(false);
         sk = socketChannel.register(selector, 0);
 
-        //将SelectionKey绑定为本Handler 下一步有事件触发时，将调用本类的run方法。
-        //参看dispatch(SelectionKey k)
         sk.attach(this);
 
         //同时将SelectionKey标记为可读，以便读取。
@@ -75,4 +73,5 @@ public class LeaderReceiveHandler implements Runnable {
         sendbuffer.flip();
         socketChannel.write(sendbuffer);
     }
+
 }
